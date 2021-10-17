@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model Users{
+  id Int @default(autoincrement()) @id
+  username String
+  password String
+  email String
+  cars Car[]
+  profile Profile?
+  role_id Roles[]
+}
+model Roles{
+  id Int @default(autoincrement()) @id
+  name String @unique
+  permissions Role_has_Permission[]
+  user_id Users[]
+}
+// model Role_has_User{
+//   id Int @default(autoincrement()) @id
+//   role_id Int
+//   user_id Int
+//   role Roles @relation(fields: [role_id],references:[id])
+//   user Users @relation(fields: [user_id],references:[id])
+// }
+
+model Role_has_Permission{
+  id Int @default(autoincrement()) @id
+  role_id Int
+  role Roles @relation(fields: [role_id],references:[id])
+  permission_id Int
+  permissin Permissions @relation(fields: [permission_id],references:[id])
+}
+model Permissions{
+  id Int @default(autoincrement()) @id
+  name String @unique
+  roles Role_has_Permission[]
+}
+model Car{
+  id Int @default(autoincrement()) @id
+  year Int
+  model String
+  userId Int
+  users Users @relation(fields: [userId],references:[id])
+}
+model Profile{
+   id Int @default(autoincrement()) @id
+   avartar String
+   address String
+   phone String
+   userId Int @unique
+   user Users @relation(fields: [userId],references:[id])
+}
